@@ -1,0 +1,6 @@
+{
+  "name": "Shorts Video Creator & Editor",
+  "description": "Crea Shorts YouTube e TikTok Reels con editor 9:16 integrato, drag-and-drop, filtri ed effetti pronti, comandi vocali, sottotitoli automatici multilingua e sincronizzazione cloud.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
