@@ -8,7 +8,7 @@ interface SocialSharerProps {
 }
 
 export default function SocialSharer({ project, language }: SocialSharerProps) {
-  const [exportType, setExportType] = useState<'video' | 'audio'>('video');
+  const [exportFormat, setExportFormat] = useState<'mp4' | 'avi' | 'mp3'>('mp4');
   const [generatedTags, setGeneratedTags] = useState<string[]>([]);
   const [optimizedTitle, setOptimizedTitle] = useState('');
   const [optimizedDesc, setOptimizedDesc] = useState('');
@@ -46,14 +46,19 @@ export default function SocialSharer({ project, language }: SocialSharerProps) {
     }
   };
 
-  const handleDownload = (format: 'avi' | 'mp3') => {
+  const handleDownload = (format: 'mp4' | 'avi' | 'mp3') => {
     setIsExporting(true);
     setExportedFile(null);
     
     setTimeout(() => {
       // Create mockup download link
       const fakeContent = `YouTube Shorts exported content of: ${project.name}. Format: ${format}`;
-      const blob = new Blob([fakeContent], { type: format === 'avi' ? 'video/avi' : 'audio/mp3' });
+      const typeMap = {
+        mp4: 'video/mp4',
+        avi: 'video/avi',
+        mp3: 'audio/mp3'
+      };
+      const blob = new Blob([fakeContent], { type: typeMap[format] });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -63,7 +68,11 @@ export default function SocialSharer({ project, language }: SocialSharerProps) {
       document.body.removeChild(a);
       
       setIsExporting(false);
-      setExportedFile(format === 'avi' ? 'REEL_SHORT.avi' : 'SOUNDTRACK.mp3');
+      setExportedFile(
+        format === 'mp4' ? 'REEL_SHORT.mp4' :
+        format === 'avi' ? 'REEL_SHORT.avi' :
+        'SOUNDTRACK.mp3'
+      );
     }, 2200);
   };
 
@@ -83,28 +92,38 @@ export default function SocialSharer({ project, language }: SocialSharerProps) {
       {/* Export download configurations */}
       <div>
         <span className="text-xs text-slate-500 font-bold block mb-2">
-          {language === 'it' ? '1. Seleziona Formato Esportazione' : '1. Choose Export Formats'}
+          {language === 'it' ? '1. Seleziona Formato Esportazione' : '1. Choose Export Format'}
         </span>
-        <div className="flex gap-2 mb-3">
+        <div className="grid grid-cols-3 gap-2 mb-3">
           <button
-            onClick={() => setExportType('video')}
-            className={`flex-1 py-2 border rounded-xl font-sans text-xs font-bold cursor-pointer transition-all active:scale-95 ${
-              exportType === 'video'
+            onClick={() => { setExportFormat('mp4'); setExportedFile(null); }}
+            className={`py-2 px-1 border rounded-xl font-sans text-[11px] font-bold cursor-pointer transition-all active:scale-95 text-center ${
+              exportFormat === 'mp4'
                 ? 'border-indigo-400 bg-indigo-50/50 text-indigo-700 shadow-sm'
                 : 'border-indigo-100 bg-slate-50/20 text-slate-600 hover:bg-white hover:text-indigo-600'
             }`}
           >
-            🎬 Video Reel (AVI)
+            🎬 Video MP4
           </button>
           <button
-            onClick={() => setExportType('audio')}
-            className={`flex-1 py-2 border rounded-xl font-sans text-xs font-bold cursor-pointer transition-all active:scale-95 ${
-              exportType === 'audio'
+            onClick={() => { setExportFormat('avi'); setExportedFile(null); }}
+            className={`py-2 px-1 border rounded-xl font-sans text-[11px] font-bold cursor-pointer transition-all active:scale-95 text-center ${
+              exportFormat === 'avi'
                 ? 'border-indigo-400 bg-indigo-50/50 text-indigo-700 shadow-sm'
                 : 'border-indigo-100 bg-slate-50/20 text-slate-600 hover:bg-white hover:text-indigo-600'
             }`}
           >
-            🎵 Audio Solo (MP3)
+            📼 Video AVI
+          </button>
+          <button
+            onClick={() => { setExportFormat('mp3'); setExportedFile(null); }}
+            className={`py-2 px-1 border rounded-xl font-sans text-[11px] font-bold cursor-pointer transition-all active:scale-95 text-center ${
+              exportFormat === 'mp3'
+                ? 'border-indigo-400 bg-indigo-50/50 text-indigo-700 shadow-sm'
+                : 'border-indigo-100 bg-slate-50/20 text-slate-600 hover:bg-white hover:text-indigo-600'
+            }`}
+          >
+            🎵 Audio MP3
           </button>
         </div>
 
@@ -117,11 +136,11 @@ export default function SocialSharer({ project, language }: SocialSharerProps) {
           </div>
         ) : (
           <button
-            onClick={() => handleDownload(exportType === 'video' ? 'avi' : 'mp3')}
+            onClick={() => handleDownload(exportFormat)}
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-3 rounded-2xl cursor-pointer shadow-md shadow-indigo-100 hover:scale-102 transition-transform flex items-center justify-center gap-2 active:scale-95"
           >
             <Download className="w-4 h-4" />
-            {language === 'it' ? `Esporta adesso in ${exportType === 'video' ? 'AVI' : 'MP3'}` : `Export to ${exportType === 'video' ? 'AVI' : 'MP3'} now`}
+            {language === 'it' ? `Esporta adesso in ${exportFormat.toUpperCase()}` : `Export to ${exportFormat.toUpperCase()} now`}
           </button>
         )}
 
